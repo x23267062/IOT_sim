@@ -212,7 +212,11 @@ def index():
 @app.route('/run_simulation', methods=['POST'])
 def run_simulation():
     aggregated_raw, aggregated_framework = simulate_and_compare_data()
-
+    # Ensure static directory exists
+    static_dir = os.path.join(os.path.dirname(__file__), 'static')
+    if not os.path.exists(static_dir):
+        os.makedirs(static_dir, exist_ok=True)  # Creates directory if it doesn't exist
+        
     # Prepare data for plots
     tenant_ids = [f"T{tenant_id}" for tenant_id in range(1, NUM_TENANTS + 1)]
     raw_exec_times = [aggregated_raw[tenant_id]['execution_time_ms'] for tenant_id in range(1, NUM_TENANTS + 1) if tenant_id in aggregated_raw]
