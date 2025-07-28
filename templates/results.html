@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simulation Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 80%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        img { max-width: 100%; height: auto; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Simulation Results</h2>
+    <a href="/"><button>Back</button></a>
+    <table>
+        <tr><th>Tenant</th><th>Raw Exec Time (ms)</th><th>Raw Memory</th><th>Framework Exec Time (ms)</th><th>Framework Memory</th></tr>
+        {% for tenant_id in raw.keys() %}
+        <tr>
+            <td>T{{ tenant_id }}</td>
+            <td>{{ raw[tenant_id].execution_time_ms|round(2) }}</td>
+            <td>{{ raw[tenant_id].memory_used }}</td>
+            <td>{{ framework[tenant_id].execution_time_ms|round(2) }}</td>
+            <td>{{ framework[tenant_id].memory_used }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h3>Execution Time Plot</h3>
+    <img src="{{ url_for('static', filename='execution_time.png') }}" alt="Execution Time">
+    <h3>Memory Usage Plot</h3>
+    <img src="{{ url_for('static', filename='memory_usage.png') }}" alt="Memory Usage">
+</body>
+</html>
+        
