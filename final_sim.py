@@ -212,11 +212,12 @@ def index():
 @app.route('/run_simulation', methods=['POST'])
 def run_simulation():
     aggregated_raw, aggregated_framework = simulate_and_compare_data()
+    
     # Ensure static directory exists
     static_dir = os.path.join(os.path.dirname(__file__), 'static')
     if not os.path.exists(static_dir):
-        os.makedirs(static_dir, exist_ok=True)  # Creates directory if it doesn't exist
-        
+        os.makedirs(static_dir, exist_ok=True)  # Should work if permissions allow
+    
     # Prepare data for plots
     tenant_ids = [f"T{tenant_id}" for tenant_id in range(1, NUM_TENANTS + 1)]
     raw_exec_times = [aggregated_raw[tenant_id]['execution_time_ms'] for tenant_id in range(1, NUM_TENANTS + 1) if tenant_id in aggregated_raw]
@@ -228,29 +229,30 @@ def run_simulation():
     plt.figure(figsize=(8, 5))
     bar_width = 0.35
     index = range(len(tenant_ids))
-    plt.bar(index, raw_exec_times, bar_width, label='Raw Data', color='red', alpha=0.6)
-    plt.bar([i + bar_width for i in index], framework_exec_times, bar_width, label='Framework', color='blue', alpha=0.6)
+    plt.bar(index, raw_exec_times, bar_width, label='Raw Data', color='#FF6347', alpha=0.6)
+    plt.bar([i + bar_width for i in index], framework_exec_times, bar_width, label='Framework', color='#4682B4', alpha=0.6)
     plt.xlabel('Tenants')
     plt.ylabel('Execution Time (ms)')
     plt.title('Average Execution Time: Raw Data vs Framework')
     plt.xticks([i + bar_width/2 for i in index], tenant_ids)
     plt.legend()
-    plt.savefig(os.path.join('static', 'execution_time.png'))
+    plt.savefig(os.path.join(static_dir, 'execution_time.png'))  # Use static_dir
     plt.close()
 
     plt.figure(figsize=(8, 5))
-    plt.bar(index, raw_memories, bar_width, label='Raw Data', color='red', alpha=0.6)
-    plt.bar([i + bar_width for i in index], framework_memories, bar_width, label='Framework', color='blue', alpha=0.6)
+    plt.bar(index, raw_memories, bar_width, label='Raw Data', color='#FF6347', alpha=0.6)
+    plt.bar([i + bar_width for i in index], framework_memories, bar_width, label='Framework', color='#4682B4', alpha=0.6)
     plt.xlabel('Tenants')
     plt.ylabel('Memory Usage (MB)')
     plt.title('Average Memory Usage: Raw Data vs Framework')
     plt.xticks([i + bar_width/2 for i in index], tenant_ids)
     plt.legend()
-    plt.savefig(os.path.join('static', 'memory_usage.png'))
+    plt.savefig(os.path.join(static_dir, 'memory_usage.png'))  # Use static_dir
     plt.close()
 
     return render_template('results.html', raw=aggregated_raw, framework=aggregated_framework)
-
+    
+    
 if __name__ == "__main__":
     # Create templates and static folders
     if not os.path.exists('templates'):
